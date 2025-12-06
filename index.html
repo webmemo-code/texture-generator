@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seamless Texture Generator</title>
+    <link rel="stylesheet" href="src/css/styles.css">
+    <!-- GIF.js library for GIF encoding -->
+    <script src="src/js/gif.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Seamless Texture Generator</h1>
+
+        <div class="controls">
+            <div class="control-group">
+                <h3>Presets</h3>
+                <div class="preset-btns" id="presetContainer">
+                    <button onclick="ui.loadPreset('silk')">Silk Wave</button>
+                    <button onclick="ui.loadPreset('silkSmooth')">Silk Smooth</button>
+                    <button onclick="ui.loadPreset('marble')">Marble</button>
+                    <button onclick="ui.loadPreset('clouds')">Clouds</button>
+                    <button onclick="ui.loadPreset('plasma')">Plasma</button>
+                    <button onclick="ui.loadPreset('water')">Water</button>
+                    <button onclick="ui.loadPreset('fire')">Fire</button>
+                    <button onclick="ui.loadPreset('vortex')">Vortex</button>
+                    <button onclick="ui.loadPreset('lava')">Lava</button>
+                    <button onclick="ui.loadPreset('ocean')">Ocean</button>
+                    <button onclick="ui.loadPreset('galaxy')">Galaxy</button>
+                    <button onclick="ui.loadPreset('wood')">Wood Grain</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>Pattern</h3>
+                <label>Pattern Type</label>
+                <select id="patternType">
+                    <option value="warp">Domain Warp (Silk/Flow)</option>
+                    <option value="marble">Marble Veins</option>
+                    <option value="turbulence">Turbulence</option>
+                    <option value="ridged">Ridged Noise</option>
+                    <option value="waves">Sine Waves</option>
+                </select>
+
+                <label>Scale <span id="scaleVal">4</span></label>
+                <input type="range" id="scale" min="1" max="20" value="4" step="0.5">
+
+                <label>Complexity <span id="octavesVal">4</span></label>
+                <input type="range" id="octaves" min="1" max="8" value="4">
+
+                <label>Warp Strength <span id="warpVal">2</span></label>
+                <input type="range" id="warp" min="0" max="5" value="2" step="0.1">
+
+                <label>Flow Angle <span id="angleVal">45°</span></label>
+                <input type="range" id="angle" min="0" max="360" value="45">
+            </div>
+
+            <div class="control-group">
+                <h3>Smear / Blur</h3>
+                <label>Smear Type</label>
+                <select id="smearType">
+                    <option value="none">None</option>
+                    <option value="directional">Directional</option>
+                    <option value="radial">Radial (from center)</option>
+                    <option value="zoom">Zoom Blur</option>
+                    <option value="flow">Flow (follows pattern)</option>
+                </select>
+
+                <label>Smear Strength <span id="smearStrengthVal">0</span></label>
+                <input type="range" id="smearStrength" min="0" max="50" value="0">
+
+                <label>Smear Angle <span id="smearAngleVal">45°</span></label>
+                <input type="range" id="smearAngle" min="0" max="360" value="45">
+
+                <label>Smear Samples <span id="smearSamplesVal">8</span></label>
+                <input type="range" id="smearSamples" min="4" max="32" value="8">
+
+                <label>Smoothness <span id="smoothnessVal">0</span></label>
+                <input type="range" id="smoothness" min="0" max="10" value="0">
+            </div>
+
+            <div class="control-group">
+                <h3>Colors</h3>
+                <div class="color-row">
+                    <label>
+                        Color 1
+                        <input type="color" id="color1" value="#00d4aa">
+                    </label>
+                    <label>
+                        Color 2
+                        <input type="color" id="color2" value="#006666">
+                    </label>
+                </div>
+                <div class="color-row">
+                    <label>
+                        Color 3
+                        <input type="color" id="color3" value="#003333">
+                    </label>
+                    <label>
+                        Highlight
+                        <input type="color" id="colorHighlight" value="#66ffdd">
+                    </label>
+                </div>
+
+                <label>Brightness <span id="brightnessVal">1.0</span></label>
+                <input type="range" id="brightness" min="0.5" max="2" value="1" step="0.1">
+
+                <label>Contrast <span id="contrastVal">1.0</span></label>
+                <input type="range" id="contrast" min="0.5" max="2" value="1" step="0.1">
+            </div>
+
+            <div class="control-group">
+                <h3>Output</h3>
+                <label>Size</label>
+                <select id="size">
+                    <option value="128">128 × 128</option>
+                    <option value="256" selected>256 × 256</option>
+                    <option value="512">512 × 512</option>
+                    <option value="1024">1024 × 1024</option>
+                </select>
+
+                <button onclick="ui.generate()">Generate</button>
+                <button onclick="ui.randomize()" class="secondary">Randomize</button>
+                <button onclick="ui.downloadPNG()" class="secondary">Download PNG</button>
+                <button onclick="ui.showGifOptions()" class="secondary">Download GIF...</button>
+
+                <div id="gifOptions" style="display: none;">
+                    <label>Animation Type</label>
+                    <select id="gifAnimType">
+                        <option value="flow">Flow / Pan</option>
+                        <option value="warp">Warp Pulse</option>
+                        <option value="rotate">Rotate Pattern</option>
+                        <option value="color">Color Cycle</option>
+                        <option value="smear">Smear Sweep</option>
+                    </select>
+
+                    <label>Frames <span id="gifFramesVal">30</span></label>
+                    <input type="range" id="gifFrames" min="10" max="60" value="30">
+
+                    <label>Duration <span id="gifDurationVal">2s</span></label>
+                    <input type="range" id="gifDuration" min="0.5" max="5" value="2" step="0.5">
+
+                    <label>GIF Size</label>
+                    <select id="gifSize">
+                        <option value="64">64 × 64</option>
+                        <option value="128" selected>128 × 128</option>
+                        <option value="256">256 × 256</option>
+                    </select>
+
+                    <button onclick="ui.generateGif()" class="gif-generate">Generate GIF</button>
+                    <button onclick="ui.hideGifOptions()" class="secondary">Cancel</button>
+
+                    <div id="gifProgress" style="display: none;">
+                        <div class="progress-bar">
+                            <div id="gifProgressBar"></div>
+                        </div>
+                        <div id="gifStatus">Preparing...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info">
+                <strong>How it works:</strong><br>
+                Uses 4D simplex noise sampled on a torus for seamless wrapping.
+                The smear effect applies motion blur along a direction while preserving tile edges.
+                <br><br>
+                <strong>Smear types:</strong><br>
+                • <em>Directional</em> - Blur along a fixed angle<br>
+                • <em>Radial</em> - Blur outward from center<br>
+                • <em>Zoom</em> - Blur toward/away from center<br>
+                • <em>Flow</em> - Blur follows the noise pattern
+            </div>
+        </div>
+
+        <div class="preview-area">
+            <div class="preview-panel">
+                <h3>Single Tile</h3>
+                <div class="single-preview">
+                    <canvas id="mainCanvas" width="256" height="256"></canvas>
+                </div>
+            </div>
+
+            <div class="preview-panel">
+                <h3>Tiled Preview (3×3)</h3>
+                <div class="tiled-preview" id="tiledPreview"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { ui } from './src/js/UIController.js';
+
+        // Make ui available globally for onclick handlers
+        window.ui = ui;
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            ui.init();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "seamless-texture-generator",
+  "version": "1.0.0",
+  "description": "A procedural seamless texture generator with GIF export capabilities",
+  "main": "src/js/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve . -l 3000"
+  },
+  "keywords": [
+    "texture",
+    "generator",
+    "procedural",
+    "seamless",
+    "tileable",
+    "gif",
+    "simplex-noise",
+    "canvas"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
